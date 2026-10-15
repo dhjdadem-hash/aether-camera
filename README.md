@@ -1,24 +1,38 @@
-name: Build APK
+name: Build Aether Camera AI Ultra APK
+
 on:
-  push:
-  workflow_dispatch:
+push:
+branches: [main]
+workflow_dispatch:
+
+permissions:
+contents: read
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: unzip -q AetherCameraAI.zip -d proj
-      - uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-      - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: 8.7
-      - name: Build
-        working-directory: proj/AetherCameraAI
-        run: gradle :app:assembleDebug --stacktrace
-      - uses: actions/upload-artifact@v4
-        with:
-          name: AetherCamera-debug-apk
-          path: proj/AetherCameraAI/app/build/outputs/apk/debug/*.apk# aether-camera
+build:
+runs-on: ubuntu-latest
+
+steps:
+  - name: Download project source
+    uses: actions/checkout@v4
+
+  - name: Set up Java 17
+    uses: actions/setup-java@v4
+    with:
+      distribution: temurin
+      java-version: '17'
+
+  - name: Set up Gradle
+    uses: gradle/actions/setup-gradle@v4
+    with:
+      gradle-version: '8.11.1'
+
+  - name: Build APK
+    run: gradle assembleDebug
+
+  - name: Upload APK
+    uses: actions/upload-artifact@v4
+    with:
+      name: Aether-Camera-AI-Ultra-APK
+      path: app/build/outputs/apk/debug/*.apk
+      if-no-files-found: error
